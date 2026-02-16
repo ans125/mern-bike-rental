@@ -10,11 +10,14 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Bike from "./pages/Bike/Bike";
 import Footer from './components/Footer';
+import Header from './components/Header';
 
 function App() {
 
   return (
     <>
+     {/* Header */}
+       <Header/>
     <Routes>
       {/* Home */}
       <Route path="/" element={<Home/>} />
