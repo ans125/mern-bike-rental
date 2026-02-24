@@ -41,7 +41,7 @@ const Header = () => {
         <Navbar.Collapse id="main-navbar">
           {/* Navigation */}
           <Nav className="mx-auto gap-lg-4">
-            <Nav.Link  as={Link} to="/Home"  style={{ color: mutedText }} >
+            <Nav.Link  as={Link} to="/"  style={{ color: mutedText }} >
               Home
             </Nav.Link>
             <Nav.Link  as={Link} to="/Bike"  style={{ color: mutedText }} >
@@ -50,7 +50,7 @@ const Header = () => {
             <Nav.Link  as={Link} to="/"  style={{ color: mutedText }} >
               Become a Provider
             </Nav.Link>
-            <Nav.Link  as={Link} to="/"  style={{ color: mutedText }} >
+            <Nav.Link  as={Link} to="/About"  style={{ color: mutedText }} >
               About
             </Nav.Link>
           </Nav>

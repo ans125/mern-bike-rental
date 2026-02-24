@@ -11,7 +11,10 @@ import Register from "./pages/Auth/Register";
 import Bike from "./pages/Bike/Bike";
 import Footer from './components/Footer';
 import Header from './components/Header';
+import BikeDetails from './pages/Bike/BikeDetails';
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 function App() {
 
   return (
@@ -21,6 +24,7 @@ function App() {
     <Routes>
       {/* Home */}
       <Route path="/" element={<Home/>} />
+      <Route path="/bike/:id" element={<BikeDetails />} />
       <Route path="/about" element={<About/>} />
       <Route path="/contact" element={<Contact/>} />
       {/* Auth */}
