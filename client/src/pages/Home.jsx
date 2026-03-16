@@ -1,6 +1,7 @@
 import { Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import BikeSlider from "../components/BikeSlider";
+import Chatbot from "../components/Chatbot/ChatButton";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ const Home = () => {
           </div>
         </Container>
       </section>
+       <Chatbot></Chatbot>
     </>
   );
 };

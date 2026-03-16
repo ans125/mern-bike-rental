@@ -61,17 +61,17 @@ const Footer = () => {
             </h6>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <a href="#" className="text-decoration-none" style={{ color: mutedText }}>
+                <a href="/" className="text-decoration-none" style={{ color: mutedText }}>
                   Home
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-decoration-none" style={{ color: mutedText }}>
+                <a href="/Bike" to="/register?role=provider"  className="text-decoration-none" style={{ color: mutedText }}>
                   Browse Bikes
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-decoration-none" style={{ color: mutedText }}>
+                <a href="/register?role=provider"  className="text-decoration-none" style={{ color: mutedText }}>
                   Provider Portal
                 </a>
               </li>

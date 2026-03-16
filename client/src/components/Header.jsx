@@ -47,7 +47,7 @@ const Header = () => {
             <Nav.Link  as={Link} to="/Bike"  style={{ color: mutedText }} >
               Browse Bikes
             </Nav.Link>
-            <Nav.Link  as={Link} to="/"  style={{ color: mutedText }} >
+            <Nav.Link  as={Link} to="/register?role=provider"   style={{ color: mutedText }} >
               Become a Provider
             </Nav.Link>
             <Nav.Link  as={Link} to="/About"  style={{ color: mutedText }} >
