@@ -23,3 +23,14 @@ export function addBike(payload) {
   return api.post("/bikes", payload);
 }
 
+export function deleteBike(id) {
+  return api.delete(`/bikes/${id}`);
+}
+
+export function updateBike(id, payload) {
+  return api.put(`/bikes/${id}`, payload);
+}
+
+export function addReview(id, payload) {
+  return api.post(`/bikes/${id}/reviews`, payload);
+}

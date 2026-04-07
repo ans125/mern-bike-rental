@@ -27,3 +27,7 @@ export const deleteBike = (id) => {
 export const getAllBookings = () => {
   return api.get("/admin/bookings");
 };
+
+export const deleteUser = (id) => {
+  return api.delete(`/admin/users/${id}`);
+};

@@ -1,9 +1,38 @@
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Alert } from "react-bootstrap";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../services/authService";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isHuman, setIsHuman] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!isHuman) return;
+
+    try {
+      setLoading(true);
+      const user = await login({ email, password });
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (user.role === "provider") {
+        navigate("/provider/dashboard");
+      } else {
+        navigate("/user/dashboard");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to login. Please check credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Container className="py-5">
@@ -31,13 +60,18 @@ const Login = () => {
                     Login to continue using RideRent
                   </p>
 
-                  <Form>
+                  {error && <Alert variant="danger">{error}</Alert>}
+
+                  <Form onSubmit={handleLogin}>
                     {/* Email */}
                     <Form.Group className="mb-3">
                       <Form.Label>Email</Form.Label>
                       <Form.Control
                         type="email"
                         placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
                       />
                     </Form.Group>
 
@@ -47,6 +81,9 @@ const Login = () => {
                       <Form.Control
                         type="password"
                         placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
                       />
                     </Form.Group>
 
@@ -62,18 +99,15 @@ const Login = () => {
 
                     {/* Login Button */}
                     <button
-                      type="button"
+                      type="submit"
                       className="btn btn-success w-100 mb-3"
-                      disabled={!isHuman}
+                      disabled={!isHuman || loading}
                     >
-                      Login
+                      {loading ? "Logging in..." : "Login"}
                     </button>
 
                     {/* Links */}
-                    <div className="d-flex justify-content-between small">
-                      <Link to="/forgot-password" className="text-decoration-none">
-                        Forgot password?
-                      </Link>
+                    <div className="d-flex justify-content-end small">
                       <Link to="/register" className="text-decoration-none">
                         Create account
                       </Link>

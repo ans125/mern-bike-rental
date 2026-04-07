@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+server/node_modules/
+server/.env
+client/.env
+
+# Custom ignores per user request
+*.md
+prompt/
 
 # Editor directories and files
 .vscode/*
