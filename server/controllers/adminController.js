@@ -102,6 +102,13 @@ export const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (user.role === "admin") {
+      return res.status(400).json({ message: "Admin accounts cannot be deleted" });
+    }
+    // Remove a provider's listings so no orphaned bikes stay bookable
+    if (user.role === "provider") {
+      await Bike.deleteMany({ provider: user._id });
+    }
     await user.deleteOne();
     res.json({ message: "User removed successfully" });
   } catch (error) {

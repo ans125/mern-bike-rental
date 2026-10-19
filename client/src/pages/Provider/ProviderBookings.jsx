@@ -30,9 +30,10 @@ const ProviderBookings = () => {
     year: "numeric" 
   });
 
-  const getStatusBadge = (endDate) => {
+  const getStatusBadge = (booking) => {
+    if (booking.status === "cancelled") return <Badge bg="danger" className="rounded-pill px-3">Cancelled</Badge>;
     const today = new Date();
-    const end = new Date(endDate);
+    const end = new Date(booking.endDate);
     if (end < today) return <Badge bg="secondary" className="rounded-pill px-3">Completed</Badge>;
     return <Badge bg="success" className="rounded-pill px-3">Active</Badge>;
   };
@@ -102,7 +103,7 @@ const ProviderBookings = () => {
                        </div>
                     </td>
                     <td className="text-center border-0">
-                        {getStatusBadge(booking.endDate)}
+                        {getStatusBadge(booking)}
                     </td>
                     <td className="text-end pe-3 border-0">
                        <span className="text-success fw-bold fs-6">

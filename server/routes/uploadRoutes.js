@@ -17,6 +17,9 @@ import { protect, providerOnly } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", protect, providerOnly, upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No image file uploaded" });
+  }
   res.send(`/uploads/${req.file.filename}`);
 });
 

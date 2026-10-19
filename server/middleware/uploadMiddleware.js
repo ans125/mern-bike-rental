@@ -1,9 +1,15 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+// Same folder server.js serves at /uploads, no matter where node is started from
+const UPLOAD_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "../uploads");
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, UPLOAD_DIR);
   },
 
   filename(req, file, cb) {
@@ -24,7 +30,7 @@ function checkFileType(file, cb) {
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb("Images only!");
+    cb(new Error("Images only (jpg, jpeg, png)"));
   }
 }
 

@@ -24,7 +24,7 @@ const BikeDetails = () => {
         setLoading(true);
         const res = await getBikeById(id);
         setBike(res.data);
-      } catch (err) {
+      } catch {
         setError("Failed to load bike details.");
       } finally {
         setLoading(false);

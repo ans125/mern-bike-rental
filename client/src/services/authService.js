@@ -22,9 +22,19 @@ export async function login({ email, password }) {
   return res.data;
 }
 
-export async function register({ name, email, password, role }) {
-  const res = await api.post("/auth/register", { name, email, password, role });
+export async function register({ name, email, password, phone, role }) {
+  const res = await api.post("/auth/register", { name, email, password, phone, role });
   storeUser(res.data);
   return res.data;
+}
+
+// Refresh the stored profile (keeps the token) so approval changes show without re-login
+export async function refreshStoredUser() {
+  const stored = getStoredUser();
+  if (!stored?.token) return stored;
+  const res = await api.get("/auth/me");
+  const updated = { ...stored, ...res.data };
+  storeUser(updated);
+  return updated;
 }
 

@@ -1,19 +1,16 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import { Container, Navbar, Nav, Button, NavDropdown } from "react-bootstrap";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Link, useNavigate } from "react-router-dom";
-import { User, LogOut, LayoutDashboard } from "lucide-react";
+import { LogOut, LayoutDashboard } from "lucide-react";
+import { getStoredUser, clearStoredUser } from "../services/authService";
 
 const Header = () => {
   const headerRef = useRef(null);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(storedUser);
-  }, [localStorage.getItem("user")]); // Rough sync
+  // Header re-renders on every route change, so reading storage here stays in sync
+  const user = getStoredUser();
 
   useGSAP(() => {
     gsap.from(headerRef.current, {
@@ -25,8 +22,7 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+    clearStoredUser();
     navigate("/login");
   };
 
@@ -84,7 +80,7 @@ const Header = () => {
                 title={
                   <div className="d-inline-flex align-items-center gap-2 text-white">
                     <img 
-                       src={`https://ui-avatars.com/api/?name=${user.name}&background=22c55e&color=fff`} 
+                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=22c55e&color=fff`} 
                        alt="User" 
                        className="rounded-circle border" 
                        width="32" 

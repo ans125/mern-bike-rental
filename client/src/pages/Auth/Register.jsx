@@ -1,33 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
-
-
-
-import { useSearchParams } from "react-router-dom";
-// import { useEffect, useState } from "react";
-
+import { Container, Row, Col, Form, Button, Card, Alert } from "react-bootstrap";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { register } from "../../services/authService";
 
 const Register = () => {
-  
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [role, setRole] = useState("user");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
   const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const captchaQuestion = "5 + 4";
+
   useEffect(() => {
     const roleParam = searchParams.get("role");
     if (roleParam === "provider") {
       requestAnimationFrame(() => setRole("provider"));
     }
-}, [searchParams]);
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  }, [searchParams]);
 
-    if (captchaAnswer !== "9") {
-      alert("Captcha verification failed");
-      return;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (captchaAnswer.trim() !== "9") {
+      return setError("Captcha verification failed.");
     }
 
-    alert("Registration submitted. Waiting for admin approval.");
+    if (formData.password.length < 6) {
+      return setError("Password must be at least 6 characters.");
+    }
+
+    try {
+      setLoading(true);
+      const user = await register({ ...formData, role });
+      navigate(user.role === "provider" ? "/provider/dashboard" : "/user/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,6 +62,8 @@ const Register = () => {
               <p className="text-muted text-center mb-4">
                 Register to rent bikes or list your own bikes on RideRent.
               </p>
+
+              {error && <Alert variant="danger">{error}</Alert>}
 
               <Form onSubmit={handleSubmit}>
                 {/* Role Selection */}
@@ -70,56 +94,49 @@ const Register = () => {
                 {/* Basic Info */}
                 <Form.Group className="mb-3">
                   <Form.Label>Full Name</Form.Label>
-                  <Form.Control type="text" required />
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" required />
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Phone</Form.Label>
-                  <Form.Control type="text" placeholder="03xx-xxxxxxx" required />
+                  <Form.Control
+                    type="text"
+                    name="phone"
+                    placeholder="03xx-xxxxxxx"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-4">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" required />
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    placeholder="At least 6 characters"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
                 </Form.Group>
-
-                <hr />
-
-                {/* Identity Verification */}
-                <h6 className="fw-bold mb-3">Identity Verification</h6>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>ID Card Image</Form.Label>
-                  <Form.Control type="file" accept="image/*" required />
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <Form.Label>Selfie with ID</Form.Label>
-                  <Form.Control type="file" accept="image/*" required />
-                </Form.Group>
-
-                {/* Provider Extra Fields */}
-                {role === "provider" && (
-                  <>
-                    <hr />
-                    <h6 className="fw-bold mb-3">Bike Verification</h6>
-
-                    <Form.Group className="mb-3">
-                      <Form.Label>Bike Ownership Proof</Form.Label>
-                      <Form.Control type="file" accept="image/*" required />
-                    </Form.Group>
-
-                    <Form.Group className="mb-4">
-                      <Form.Label>Bike Number Plate</Form.Label>
-                      <Form.Control type="text" required />
-                    </Form.Group>
-                  </>
-                )}
 
                 {/* Captcha */}
                 <hr />
@@ -137,20 +154,28 @@ const Register = () => {
                 </Form.Group>
 
                 {/* Approval Notice */}
-                <div className="bg-light p-3 rounded mb-4">
-                  <small className="text-muted">
-                    Your account will remain <strong>pending</strong> until
-                    reviewed and approved by the admin.
-                  </small>
-                </div>
+                {role === "provider" && (
+                  <div className="bg-light p-3 rounded mb-4">
+                    <small className="text-muted">
+                      Provider accounts stay <strong>pending</strong> until
+                      reviewed and approved by the admin. You can list bikes after approval.
+                    </small>
+                  </div>
+                )}
 
                 <Button
                   type="submit"
                   className="w-100"
+                  disabled={loading}
                   style={{ backgroundColor: "#1f8f4a", border: "none" }}
                 >
-                  Submit for Approval
+                  {loading ? "Creating account..." : "Create Account"}
                 </Button>
+
+                <div className="text-center small mt-3">
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-decoration-none">Login</Link>
+                </div>
               </Form>
             </Card.Body>
           </Card>

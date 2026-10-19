@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProviderLayout from "../../components/Provider/ProviderLayout";
 import { Alert, Row, Col, Card } from "react-bootstrap";
 import { Info, Bike, CalendarCheck, Clock } from "lucide-react";
+import { getStoredUser, refreshStoredUser } from "../../services/authService";
+import { getMyBikes } from "../../services/bikeService";
+import { getProviderBookings } from "../../services/bookingService";
 
 const ProviderDashboard = () => {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const [user, setUser] = useState(getStoredUser() || {});
+  const [stats, setStats] = useState({ bikes: "--", activeBookings: "--" });
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const fresh = await refreshStoredUser();
+        setUser(fresh || {});
+        // Bike/booking APIs are blocked until the admin approves the provider
+        if (!fresh?.isApproved) return;
+        const [bikesRes, bookingsRes] = await Promise.all([getMyBikes(), getProviderBookings()]);
+        const now = new Date();
+        setStats({
+          bikes: bikesRes.data.length,
+          activeBookings: bookingsRes.data.filter(
+            (b) => b.status !== "cancelled" && new Date(b.endDate) >= now
+          ).length,
+        });
+      } catch (err) {
+        console.error("Error loading provider dashboard", err);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <ProviderLayout>
@@ -19,8 +45,8 @@ const ProviderDashboard = () => {
           <div>
             <Alert.Heading className="fs-5 fw-bold mb-1">Account Pending Approval</Alert.Heading>
             <p className="mb-0 small">
-              Your provider account is currently under review by our administration. 
-              You can still add bikes, but they will not be visible to users until you are approved.
+              Your provider account is currently under review by our administration.
+              You will be able to add bikes and see bookings once an admin approves you.
             </p>
           </div>
         </Alert>
@@ -35,7 +61,7 @@ const ProviderDashboard = () => {
                 </div>
                 <div>
                    <h6 className="text-secondary mb-0">Total Bikes</h6>
-                   <h3 className="fw-bold mb-0">--</h3>
+                   <h3 className="fw-bold mb-0">{stats.bikes}</h3>
                 </div>
              </div>
           </Card>
@@ -48,7 +74,7 @@ const ProviderDashboard = () => {
                 </div>
                 <div>
                    <h6 className="text-secondary mb-0">Active Bookings</h6>
-                   <h3 className="fw-bold mb-0">--</h3>
+                   <h3 className="fw-bold mb-0">{stats.activeBookings}</h3>
                 </div>
              </div>
           </Card>

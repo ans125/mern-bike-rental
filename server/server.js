@@ -3,13 +3,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
-import { protect } from "./middleware/authMiddleware.js";
 import bikeRoutes from "./routes/bikeRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
 dotenv.config();
@@ -20,9 +20,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/test-protected", protect, (req, res) => {
-  res.json({ message: "You are authorized", user: req.user });
-});
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -41,7 +38,14 @@ app.use("/api/admin", adminRoutes);
 
 app.use("/api/upload", uploadRoutes);
 
+app.use("/api/chat", chatRoutes);
+
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
+// Turn upload/other errors into JSON instead of an HTML error page
+app.use((err, req, res, next) => {
+  res.status(err.status || 400).json({ message: err.message || "Something went wrong" });
+});
 
 const PORT = process.env.PORT || 5000;
 

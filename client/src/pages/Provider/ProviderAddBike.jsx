@@ -4,7 +4,7 @@ import { addBike } from "../../services/bikeService";
 import api from "../../api/axios";
 import { Form, Button, Row, Col, Card, Alert, Spinner, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { Upload, Save, X, Bike as BikeIcon, MapPin, Tag, DollarSign } from "lucide-react";
+import { Upload, Save, X, Bike as BikeIcon, MapPin, Tag, Info } from "lucide-react";
 
 const ProviderAddBike = () => {
   const navigate = useNavigate();
@@ -91,7 +91,7 @@ const ProviderAddBike = () => {
                 <Form.Control
                   type="text"
                   name="name"
-                  placeholder="e.g. Mountain Explorer Pro"
+                  placeholder="e.g. Honda CD 70"
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -108,7 +108,7 @@ const ProviderAddBike = () => {
                     <Form.Control
                       type="text"
                       name="brand"
-                      placeholder="e.g. Trek, Giant, Specialized"
+                      placeholder="e.g. Honda, Yamaha, Suzuki"
                       value={formData.brand}
                       onChange={handleChange}
                       required
@@ -124,7 +124,7 @@ const ProviderAddBike = () => {
                     <Form.Control
                       type="text"
                       name="city"
-                      placeholder="e.g. New York, London"
+                      placeholder="e.g. Lahore, Karachi"
                       value={formData.city}
                       onChange={handleChange}
                       required
@@ -141,7 +141,7 @@ const ProviderAddBike = () => {
                 <Form.Control
                   type="number"
                   name="rentPerDay"
-                  placeholder="0.00"
+                  placeholder="e.g. 1500"
                   value={formData.rentPerDay}
                   onChange={handleChange}
                   required

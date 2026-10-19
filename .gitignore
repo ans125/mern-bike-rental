@@ -6,18 +6,27 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-Bike Rental Web Application – Prototype Documentation.docx
+
+# Dependencies & builds
 node_modules
 dist
 dist-ssr
 *.local
-server/node_modules/
+
+# Secrets — never commit
+.env
+.env.*
 server/.env
 client/.env
 
-# Custom ignores per user request
-*.md
+# Private docs (backend team only) and personal files
+internal-docs/
+*.docx
+
+# Generated tools output / scratch notes
+graphify-out/
 prompt/
+.claude/settings.local.json
 
 # Editor directories and files
 .vscode/*

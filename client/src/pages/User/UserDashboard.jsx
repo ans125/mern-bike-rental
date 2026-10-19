@@ -29,7 +29,7 @@ const UserDashboard = () => {
       try {
         await cancelBooking(id);
         fetchBookings();
-      } catch (err) {
+      } catch {
         alert("Failed to cancel booking");
       }
     }
@@ -114,15 +114,19 @@ const UserDashboard = () => {
                                   </div>
                                </td>
                                <td className="text-center border-0">
-                                  <Badge bg={new Date(b.endDate) < new Date() ? "secondary" : "success"} className="rounded-pill">
-                                     {new Date(b.endDate) < new Date() ? "Completed" : "Scheduled"}
-                                  </Badge>
+                                  {b.status === "cancelled" ? (
+                                     <Badge bg="danger" className="rounded-pill">Cancelled</Badge>
+                                  ) : (
+                                     <Badge bg={new Date(b.endDate) < new Date() ? "secondary" : "success"} className="rounded-pill">
+                                        {new Date(b.endDate) < new Date() ? "Completed" : "Scheduled"}
+                                     </Badge>
+                                  )}
                                </td>
                                <td className="text-end border-0 fw-bold text-success">
                                   Rs. {b.totalPrice?.toFixed(2)}
                                </td>
                                <td className="text-end border-0">
-                                  {new Date(b.startDate) > new Date() && (
+                                  {b.status !== "cancelled" && new Date(b.startDate) > new Date() && (
                                      <button 
                                        className="btn btn-link text-danger p-0 border-0"
                                        onClick={() => handleCancel(b._id)}

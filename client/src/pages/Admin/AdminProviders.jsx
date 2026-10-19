@@ -33,7 +33,7 @@ const AdminProviders = () => {
       try {
         await approveProvider(id);
         fetchData();
-      } catch (err) {
+      } catch {
         alert("Failed to approve provider");
       }
     }
@@ -45,7 +45,7 @@ const AdminProviders = () => {
       try {
         await deleteUser(id);
         fetchData();
-      } catch (err) {
+      } catch {
         alert("Failed to delete provider");
       }
     }

@@ -11,6 +11,10 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    phone: {
+      type: String,
+      default: "",
+    },
     password: {
       type: String,
       required: true,
@@ -21,9 +25,9 @@ const userSchema = mongoose.Schema(
       default: "user",
     },
     isApproved: {
-    type: Boolean,
-    default: false
-  },
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

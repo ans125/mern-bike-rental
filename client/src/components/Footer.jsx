@@ -66,13 +66,18 @@ const Footer = () => {
                 </a>
               </li>
               <li className="mb-2">
-                <a href="/Bike" to="/register?role=provider"  className="text-decoration-none" style={{ color: mutedText }}>
+                <a href="/bike" className="text-decoration-none" style={{ color: mutedText }}>
                   Browse Bikes
                 </a>
               </li>
               <li className="mb-2">
                 <a href="/register?role=provider"  className="text-decoration-none" style={{ color: mutedText }}>
                   Provider Portal
+                </a>
+              </li>
+              <li className="mb-2">
+                <a href="/project-overview.html" className="text-decoration-none" style={{ color: mutedText }}>
+                  Project Overview
                 </a>
               </li>
             </ul>

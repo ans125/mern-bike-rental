@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, User, Bot, Loader2 } from "lucide-react";
+import api from "../../api/axios";
 
 // The Chatbot Component
 const Chatbot = () => {
@@ -32,43 +33,9 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey || apiKey === "YOUR_GEMINI_API_KEY_HERE") {
-         setTimeout(() => {
-            setMessages((prev) => [
-              ...prev,
-              { sender: "bot", text: "Please set your VITE_GEMINI_API_KEY in the client/.env file to chat with me!" }
-            ]);
-            setLoading(false);
-         }, 800);
-         return;
-      }
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-             system_instruction: {
-                parts: {
-                   text: "You are a highly professional, helpful customer support assistant for a bike rental platform called 'RideRent' operating in Pakistan. Keep responses relatively concise. Provide helpful answers about prices, bookings, and bikes."
-                }
-             },
-             contents: [
-               { parts: [{ text: userMessage.text }] }
-             ]
-          }),
-        }
-      );
-
-      const data = await response.json();
-      
-      if (data.error) {
-         throw new Error(data.error.message);
-      }
-
-      const botText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not exactly sure how to answer that.";
+      // The server holds the Gemini key and adds live bike data to the prompt
+      const res = await api.post("/chat", { message: userMessage.text });
+      const botText = res.data.reply || "I'm not exactly sure how to answer that.";
 
       setMessages((prev) => [
         ...prev,
@@ -210,9 +177,11 @@ const Chatbot = () => {
                     maxWidth: "80%",
                     fontSize: "0.9rem",
                     lineHeight: "1.4",
+                    whiteSpace: "pre-wrap",
                   }}
-                  dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, "<br/>") }}
-                />
+                >
+                  {msg.text}
+                </div>
               </div>
             ))}
             

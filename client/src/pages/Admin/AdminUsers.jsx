@@ -28,7 +28,7 @@ const AdminUsers = () => {
       try {
         await deleteUser(id);
         fetchUsers();
-      } catch (err) {
+      } catch {
         alert("Failed to delete user");
       }
     }

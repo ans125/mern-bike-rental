@@ -2,29 +2,29 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 export const protect = async (req, res, next) => {
-  let token;
+  const header = req.headers.authorization;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
+  if (!header || !header.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Not authorized, no token" });
+  }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    const token = header.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = await User.findById(decoded.id).select("-password");
+    req.user = await User.findById(decoded.id).select("-password");
 
-      next();
-    } catch (error) {
-      res.status(401).json({ message: "Not authorized, token failed" });
+    // Token is valid but the account was deleted
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized, user not found" });
     }
+  } catch (error) {
+    return res.status(401).json({ message: "Not authorized, token failed" });
   }
 
-  if (!token) {
-    res.status(401).json({ message: "Not authorized, no token" });
-  }
+  next();
 };
+
 export const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
@@ -33,16 +33,8 @@ export const adminOnly = (req, res, next) => {
   }
 };
 
-// export const providerOnly = (req, res, next) => {
-//   if (req.user && req.user.role === "provider") {
-//     next();
-//   } else {
-//     res.status(403).json({ message: "Provider access only" });
-//   }
-// };
 export const providerOnly = (req, res, next) => {
   if (req.user && req.user.role === "provider") {
-
     if (!req.user.isApproved) {
       return res.status(403).json({
         message: "Provider account pending admin approval",

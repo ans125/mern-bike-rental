@@ -30,7 +30,7 @@ const AdminBikes = () => {
       try {
         await deleteBike(id);
         fetchBikes();
-      } catch (err) {
+      } catch {
         alert("Failed to delete bike");
       }
     }
