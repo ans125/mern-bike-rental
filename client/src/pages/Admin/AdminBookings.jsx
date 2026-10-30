@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../../components/Admin/AdminLayout";
 import { getAllBookings } from "../../services/adminService";
-import { Table, Badge, Spinner } from "react-bootstrap";
+import { Table, Badge, Spinner, Form, Row, Col } from "react-bootstrap";
+import StatusBadge from "../../components/StatusBadge";
+import TablePagination from "../../components/TablePagination";
+import usePagination from "../../hooks/usePagination";
 import { Calendar, User as UserIcon, Bike as BikeIcon, Clock } from "lucide-react";
 
 const AdminBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState("all");
+  const [query, setQuery] = useState("");
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -23,6 +28,16 @@ const AdminBookings = () => {
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  const filtered = useMemo(() => {
+    const text = query.trim().toLowerCase();
+    return bookings.filter(
+      (b) =>
+        (status === "all" || b.status === status) &&
+        (!text || `${b.user?.name} ${b.provider?.name} ${b.bike?.name} ${b._id}`.toLowerCase().includes(text))
+    );
+  }, [bookings, status, query]);
+  const pagination = usePagination(filtered, 12);
 
   const formatDate = (date) => new Date(date).toLocaleDateString("en-US", { 
     month: "short", 
@@ -43,11 +58,27 @@ const AdminBookings = () => {
       </div>
 
       <div className="bg-white rounded shadow-sm p-4 border border-light">
+        <Row className="g-2 mb-3">
+          <Col md={4}>
+            <Form.Select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
+              <option value="all">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Accepted</option>
+              <option value="ongoing">On ride</option>
+              <option value="completed">Completed</option>
+              <option value="rejected">Rejected</option>
+              <option value="cancelled">Cancelled</option>
+            </Form.Select>
+          </Col>
+          <Col md={8}>
+            <Form.Control placeholder="Search customer, owner, bike or booking ID" value={query} onChange={(e) => setQuery(e.target.value)} />
+          </Col>
+        </Row>
         {loading ? (
           <div className="text-center py-5">
             <Spinner animation="border" variant="success" />
           </div>
-        ) : bookings.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="text-center py-5 border rounded bg-light">
             <Clock size={48} className="text-muted mb-3 opacity-25" />
             <p className="text-muted mb-0">No booking logs found.</p>
@@ -61,11 +92,12 @@ const AdminBookings = () => {
                   <th className="py-3 border-0">User / Customer</th>
                   <th className="py-3 border-0">Vehicles</th>
                   <th className="py-3 border-0 text-center">Rental Period</th>
-                  <th className="py-3 pe-3 border-0 text-center text-end">Price Paid</th>
+                  <th className="py-3 border-0 text-center">Status</th>
+                  <th className="py-3 pe-3 border-0 text-end">Total / Commission</th>
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((booking) => (
+                {pagination.pageItems.map((booking) => (
                   <tr key={booking._id} className="border-bottom hover-bg-light transition-all">
                     <td className="ps-3 py-3 border-0">
                        <span className="fw-bold text-dark font-monospace" style={{fontSize: "0.8rem"}}>
@@ -90,7 +122,7 @@ const AdminBookings = () => {
                           </div>
                           <div>
                             <div className="fw-medium text-dark mb-0 lh-1">{booking.bike?.name || "Bike Removed"}</div>
-                            <div className="text-muted" style={{fontSize: "0.7rem"}}>{booking.bike?.brand}</div>
+                            <div className="text-muted" style={{fontSize: "0.7rem"}}>Owner: {booking.provider?.name || "-"}</div>
                           </div>
                        </div>
                     </td>
@@ -102,10 +134,12 @@ const AdminBookings = () => {
                           <span className="fw-bold">{formatDate(booking.endDate)}</span>
                        </div>
                     </td>
+                    <td className="text-center border-0">
+                       <StatusBadge booking={booking} />
+                    </td>
                     <td className="text-end pe-3 border-0">
-                       <span className="text-success fw-bold fs-6">
-                           Rs. {(booking.totalPrice || 0).toFixed(2)}
-                       </span>
+                       <div className="fw-bold text-dark">Rs. {(booking.totalPrice || 0).toLocaleString()}</div>
+                       <div className="text-success small">Rs. {(booking.commission || 0).toLocaleString()} fee</div>
                     </td>
                   </tr>
                 ))}
@@ -113,6 +147,7 @@ const AdminBookings = () => {
             </Table>
           </div>
         )}
+        <TablePagination pagination={pagination} label="bookings" />
       </div>
     </AdminLayout>
   );

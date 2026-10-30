@@ -1,7 +1,9 @@
 import { Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import BikeSlider from "../components/BikeSlider";
-import Chatbot from "../components/Chatbot/ChatButton";
+import { BIKE_CATEGORIES } from "../constants/bikeCategories";
+
+const CITIES = ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Sialkot"];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -39,13 +41,49 @@ const Home = () => {
         </Container>
       </section>
 
+      {/* Quick browse by city and type */}
+      <section className="pt-5">
+        <Container>
+          <Row className="g-4">
+            <Col md={6}>
+              <h5 className="fw-bold mb-3">Browse by city</h5>
+              <div className="d-flex flex-wrap gap-2">
+                {CITIES.map((city) => (
+                  <button
+                    key={city}
+                    className="btn btn-outline-success btn-sm rounded-pill px-3"
+                    onClick={() => navigate(`/bike?city=${encodeURIComponent(city)}`)}
+                  >
+                    {city}
+                  </button>
+                ))}
+              </div>
+            </Col>
+            <Col md={6}>
+              <h5 className="fw-bold mb-3">Browse by bike type</h5>
+              <div className="d-flex flex-wrap gap-2">
+                {BIKE_CATEGORIES.map((c) => (
+                  <button
+                    key={c}
+                    className="btn btn-outline-dark btn-sm rounded-pill px-3"
+                    onClick={() => navigate(`/bike?category=${encodeURIComponent(c)}`)}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
       {/* Popular Bikes Section */}
       <section className="py-5">
         <Container>
           <div className="mb-4">
-            <h3 className="fw-bold">Popular Bikes Available</h3>
+            <h3 className="fw-bold">Top Rated Bikes</h3>
             <p className="text-muted">
-              Explore commonly rented bikes from different cities in Pakistan.
+              Most loved bikes by RideRent customers across Pakistan.
             </p>
           </div>
 
@@ -61,7 +99,6 @@ const Home = () => {
           </div>
         </Container>
       </section>
-       <Chatbot></Chatbot>
     </>
   );
 };

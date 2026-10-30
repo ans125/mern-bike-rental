@@ -4,6 +4,7 @@ import { addBike } from "../../services/bikeService";
 import api from "../../api/axios";
 import { Form, Button, Row, Col, Card, Alert, Spinner, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { BIKE_CATEGORIES } from "../../constants/bikeCategories";
 import { Upload, Save, X, Bike as BikeIcon, MapPin, Tag, Info } from "lucide-react";
 
 const ProviderAddBike = () => {
@@ -18,6 +19,8 @@ const ProviderAddBike = () => {
     brand: "",
     city: "",
     rentPerDay: "",
+    category: "",
+    description: "",
   });
 
   const handleChange = (e) => {
@@ -146,6 +149,33 @@ const ProviderAddBike = () => {
                   onChange={handleChange}
                   required
                   min="1"
+                  className="bg-light border-0 py-2 shadow-none"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-medium">Bike type</Form.Label>
+                <Form.Select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  className="bg-light border-0 py-2 shadow-none"
+                >
+                  <option value="">Choose engine class</option>
+                  {BIKE_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-medium">Description (optional)</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="description"
+                  placeholder="Engine, condition, helmet included, pick-up area..."
+                  value={formData.description}
+                  onChange={handleChange}
                   className="bg-light border-0 py-2 shadow-none"
                 />
               </Form.Group>

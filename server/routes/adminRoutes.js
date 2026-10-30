@@ -12,9 +12,9 @@
  */
 /**
  * @swagger
- * /api/admin/providers/pending:
+ * /api/admin/verifications:
  *   get:
- *     summary: Get providers waiting approval
+ *     summary: Customer and provider accounts by verification status (?status=pending|approved|rejected)
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
@@ -24,9 +24,9 @@
  */
 /**
  * @swagger
- * /api/admin/providers/{id}/approve:
+ * /api/admin/users/{id}/approve:
  *   put:
- *     summary: Approve provider
+ *     summary: Approve an account after checking the CNIC
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
@@ -61,20 +61,59 @@
  *     security:
  *       - bearerAuth: []
  */
+/**
+ * @swagger
+ * /api/admin/messages:
+ *   get:
+ *     summary: Admin get support messages from the Contact page
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ */
+/**
+ * @swagger
+ * /api/admin/messages/{id}:
+ *   put:
+ *     summary: Mark a support message open or resolved
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ */
+/**
+ * @swagger
+ * /api/admin/users/{id}/reject:
+ *   put:
+ *     summary: Reject an account with a reason ({ reason })
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ */
+/**
+ * @swagger
+ * /api/admin/users/{id}/documents/{side}:
+ *   get:
+ *     summary: View a CNIC image (side = cnicFront | cnicBack); admin only
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ */
 import express from "express";
 // import { approveProvider } from "../controllers/adminController.js";
 // import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 import {
   getAllUsers,
-  getPendingProviders,
-  approveProvider,
+  getVerifications,
+  approveUser,
+  rejectUser,
+  getUserDocument,
   getAllBikes,
   deleteBike,
   getAllBookings,
   getAdminStats,
   deleteUser
 } from "../controllers/adminController.js";
+import { getSupportMessages, updateSupportMessageStatus } from "../controllers/supportController.js";
 
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -83,9 +122,13 @@ const router = express.Router();
 router.get("/users", protect, adminOnly, getAllUsers);
 router.delete("/users/:id", protect, adminOnly, deleteUser);
 
-router.get("/providers/pending", protect, adminOnly, getPendingProviders);
+router.get("/verifications", protect, adminOnly, getVerifications);
 
-router.put("/providers/:id/approve", protect, adminOnly, approveProvider);
+router.put("/users/:id/approve", protect, adminOnly, approveUser);
+
+router.put("/users/:id/reject", protect, adminOnly, rejectUser);
+
+router.get("/users/:id/documents/:side", protect, adminOnly, getUserDocument);
 
 router.get("/bikes", protect, adminOnly, getAllBikes);
 
@@ -94,5 +137,9 @@ router.delete("/bikes/:id", protect, adminOnly, deleteBike);
 router.get("/bookings", protect, adminOnly, getAllBookings);
 
 router.get("/stats", protect, adminOnly, getAdminStats);
+
+router.get("/messages", protect, adminOnly, getSupportMessages);
+
+router.put("/messages/:id", protect, adminOnly, updateSupportMessageStatus);
 
 export default router;

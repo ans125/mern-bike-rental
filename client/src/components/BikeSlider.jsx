@@ -14,7 +14,12 @@ const BikeSlider = () => {
     const fetchBikes = async () => {
       try {
         const res = await getAllBikes();
-        setBikes(res.data || []);
+        // Home page shows the 10 best-rated bikes
+        const topRated = (res.data || [])
+          .slice()
+          .sort((a, b) => (b.numReviews ? b.rating : 0) - (a.numReviews ? a.rating : 0) || (b.numReviews || 0) - (a.numReviews || 0))
+          .slice(0, 10);
+        setBikes(topRated);
       } catch (error) {
         console.error("Error fetching bikes for slider", error);
       } finally {
@@ -70,7 +75,7 @@ const BikeSlider = () => {
               src={resolveBikeImageUrl(bike.image)}
               alt={bike.name}
               className="img-fluid rounded-top w-100"
-              style={{ height: "180px", objectFit: "cover" }}
+              style={{ height: "180px", objectFit: bike.image?.startsWith("/uploads/demo") ? "contain" : "cover", background: "#f8f9fa" }}
               onError={(e) => {
                   e.target.onerror = null; 
                   e.target.src = "https://placehold.co/400x300?text=No+Image";
@@ -86,7 +91,7 @@ const BikeSlider = () => {
               </p>
               <hr className="my-2 border-light" />
               <p className="fw-bold text-success mb-0 fs-5 mt-1">
-                Rs. {bike.rentPerDay} <span className="small text-muted fw-normal fs-6">/ day</span>
+                Rs. {bike.rentPerDay.toLocaleString()} <span className="small text-muted fw-normal fs-6">/ day</span>
               </p>
             </div>
           </div>

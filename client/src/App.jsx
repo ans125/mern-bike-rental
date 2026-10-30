@@ -1,5 +1,5 @@
 import './App.css'
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 
 // Pages
 import Home from "./pages/Home";
@@ -13,9 +13,10 @@ import BikeDetails from './pages/Bike/BikeDetails';
 // Admin Pages
 import AdminDashboard from "./dashboards/AdminDashboard";
 import AdminUsers from "./pages/Admin/AdminUsers";
-import AdminProviders from "./pages/Admin/AdminProviders";
+import AdminVerifications from "./pages/Admin/AdminVerifications";
 import AdminBikes from "./pages/Admin/AdminBikes";
 import AdminBookings from "./pages/Admin/AdminBookings";
+import AdminMessages from "./pages/Admin/AdminMessages";
 
 // Provider Pages
 import ProviderDashboard from "./pages/Provider/ProviderDashboard";
@@ -29,6 +30,7 @@ import UserDashboard from "./pages/User/UserDashboard";
 // Components
 import Footer from './components/Footer';
 import Header from './components/Header';
+import CustomerSupport from './components/Chatbot/ChatButton';
 
 // Routes
 import AdminRoute from "./routes/AdminRoute";
@@ -60,9 +62,11 @@ function App() {
         {/* Admin Routes (Protected) */}
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
-        <Route path="/admin/providers" element={<AdminRoute><AdminProviders /></AdminRoute>} />
+        <Route path="/admin/verifications" element={<AdminRoute><AdminVerifications /></AdminRoute>} />
+        <Route path="/admin/providers" element={<Navigate to="/admin/verifications" replace />} />
         <Route path="/admin/bikes" element={<AdminRoute><AdminBikes /></AdminRoute>} />
         <Route path="/admin/bookings" element={<AdminRoute><AdminBookings /></AdminRoute>} />
+        <Route path="/admin/messages" element={<AdminRoute><AdminMessages /></AdminRoute>} />
 
         {/* Provider Routes (Protected) */}
         <Route path="/provider/dashboard" element={<ProviderRoute><ProviderDashboard /></ProviderRoute>} />
@@ -75,6 +79,7 @@ function App() {
       </Routes>
 
       {!isAdminPath && !isProviderPath && <Footer />}
+      {!isAdminPath && !isProviderPath && <CustomerSupport />}
     </>
   )
 }

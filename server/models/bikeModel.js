@@ -61,6 +61,22 @@ const bikeSchema = mongoose.Schema(
         required: true
     },
 
+    description: {
+        type: String,
+        default: ""
+    },
+
+    // Engine class used for browsing, e.g. "70cc", "125cc", "Sports & Heavy"
+    category: {
+        type: String,
+        default: ""
+    },
+
+    isAvailable: {
+        type: Boolean,
+        default: true
+    },
+
     rating: {
         type: Number,
         default: 0

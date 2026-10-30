@@ -9,6 +9,14 @@ the platform.
   also at https://riderent-tawny.vercel.app/project-overview.html
 - **For developers & coding agents:** start at [CLAUDE.md](CLAUDE.md)
 
+## Main features
+- Customer and provider accounts; providers are approved by the admin
+- Search bikes by city, price and brand; booking requests with automatic price and no double booking
+- Providers accept/reject requests, edit bikes and switch availability; 10% platform commission and earnings
+- Ratings & reviews from renters who booked
+- AI customer support chat (Google Gemini) and a Contact page with an admin support inbox
+- Admin dashboard: users, providers, bikes, bookings, revenue, platform earnings
+
 ## Tech stack
 MongoDB · Express.js · React (Vite) · Node.js · JWT auth · Multer uploads · Google Gemini (AI assistant)
 
@@ -30,7 +38,7 @@ You need **Node.js 22** and **MongoDB** running on `localhost:27017`.
    ```
    cd server
    npm install
-   node seedUsers.js && node seedBikes.js   # first time only: demo accounts + bikes
+   node seedDemoData.js                      # demo accounts, ~95 bikes, bookings, reviews
    npm run dev
    ```
 4. In a second terminal, start the frontend:
@@ -50,4 +58,4 @@ CLAUDE.md      Index of all docs and project rules
 ```
 
 ## Future enhancements
-Edit bikes, ratings & reviews UI, provider booking confirmation, online payments, earnings module, car rentals.
+Out of scope for this version (kept simple on purpose): online payments, SMS/email/OTP, external map services, CNIC re-upload, damage reports, search by free dates.

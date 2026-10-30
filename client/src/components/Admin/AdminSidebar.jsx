@@ -7,6 +7,7 @@ import {
   UserCheck, 
   Bike, 
   CalendarCheck, 
+  Inbox,
   LogOut 
 } from "lucide-react";
 
@@ -16,9 +17,10 @@ const AdminSidebar = () => {
   const menuItems = [
     { path: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/admin/users", icon: Users, label: "Users" },
-    { path: "/admin/providers", icon: UserCheck, label: "Providers Approval" },
+    { path: "/admin/verifications", icon: UserCheck, label: "Verifications" },
     { path: "/admin/bikes", icon: Bike, label: "Manage Bikes" },
     { path: "/admin/bookings", icon: CalendarCheck, label: "All Bookings" },
+    { path: "/admin/messages", icon: Inbox, label: "Support Messages" },
   ];
 
   const handleLogout = () => {
@@ -27,7 +29,7 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="bg-white border-end vh-100 position-sticky top-0" style={{ width: "260px" }}>
+    <div className="bg-white border-end vh-100 position-sticky top-0" style={{ width: "260px", flexShrink: 0 }}>
       <div className="p-4 border-bottom">
         <h5 className="fw-bold mb-0" style={{ color: "#198754" }}>Admin Panel</h5>
       </div>

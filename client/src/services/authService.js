@@ -22,10 +22,15 @@ export async function login({ email, password }) {
   return res.data;
 }
 
-export async function register({ name, email, password, phone, role }) {
-  const res = await api.post("/auth/register", { name, email, password, phone, role });
+// formData: FormData with the signup fields, CNIC images and captcha answer
+export async function register(formData) {
+  const res = await api.post("/auth/register", formData);
   storeUser(res.data);
   return res.data;
+}
+
+export function getCaptcha() {
+  return api.get("/auth/captcha");
 }
 
 // Refresh the stored profile (keeps the token) so approval changes show without re-login

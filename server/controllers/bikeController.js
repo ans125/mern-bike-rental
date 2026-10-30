@@ -1,9 +1,10 @@
 import Bike from "../models/bikeModel.js";
+import Booking from "../models/Booking.js";
 
 // PROVIDER - Add Bike
 export const addBike = async (req, res) => {
   try {
-    const { name, brand, city, rentPerDay, image } = req.body;
+    const { name, brand, city, rentPerDay, image, description, category } = req.body;
 
     const bike = await Bike.create({
       provider: req.user._id,
@@ -12,6 +13,8 @@ export const addBike = async (req, res) => {
       city,
       rentPerDay,
       image,
+      description,
+      category,
     });
 
     res.status(201).json(bike);
@@ -23,7 +26,8 @@ export const addBike = async (req, res) => {
 // PUBLIC - Get All Bikes
 export const getAllBikes = async (req, res) => {
   try {
-    const bikes = await Bike.find().populate("provider", "name email");
+    // Hide bikes the provider has marked unavailable (old records without the field count as available)
+    const bikes = await Bike.find({ isAvailable: { $ne: false } }).populate("provider", "name email");
     res.json(bikes);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -80,7 +84,7 @@ export const deleteBike = async (req, res) => {
 // PROVIDER - Update Bike
 export const updateBike = async (req, res) => {
   try {
-    const { name, brand, city, rentPerDay, image } = req.body;
+    const { name, brand, city, rentPerDay, image, description, category, isAvailable } = req.body;
     const bike = await Bike.findById(req.params.id);
 
     if (!bike) {
@@ -96,6 +100,9 @@ export const updateBike = async (req, res) => {
     bike.city = city || bike.city;
     bike.rentPerDay = rentPerDay || bike.rentPerDay;
     bike.image = image || bike.image;
+    if (description !== undefined) bike.description = description;
+    if (category !== undefined) bike.category = category;
+    if (isAvailable !== undefined) bike.isAvailable = Boolean(isAvailable);
 
     const updatedBike = await bike.save();
     res.json(updatedBike);
@@ -107,9 +114,26 @@ export const updateBike = async (req, res) => {
 export const createBikeReview = async (req, res) => {
   try {
     const { rating, comment } = req.body;
+    const score = Number(rating);
+
+    if (!score || score < 1 || score > 5 || !comment?.trim()) {
+      return res.status(400).json({ message: "Rating (1-5) and comment are required" });
+    }
+
     const bike = await Bike.findById(req.params.id);
 
     if (bike) {
+      // Only renters who actually picked up this bike may review it
+      const hasRidden = await Booking.exists({
+        bike: bike._id,
+        user: req.user._id,
+        status: { $in: ["ongoing", "completed"] },
+      });
+
+      if (!hasRidden) {
+        return res.status(403).json({ message: "You can review a bike after you have picked it up" });
+      }
+
       const alreadyReviewed = bike.reviews.find(
         r => r.user.toString() === req.user._id.toString()
       );
@@ -120,8 +144,8 @@ export const createBikeReview = async (req, res) => {
 
       const review = {
         name: req.user.name,
-        rating: Number(rating),
-        comment,
+        rating: score,
+        comment: comment.trim(),
         user: req.user._id
       };
 

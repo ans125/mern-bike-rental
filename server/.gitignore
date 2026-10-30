@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Identity documents uploaded at signup (CNIC) — private
+private/

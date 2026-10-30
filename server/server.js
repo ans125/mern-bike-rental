@@ -10,6 +10,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import supportRoutes from "./routes/supportRoutes.js";
 import swaggerUI from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
 dotenv.config();
@@ -39,6 +40,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
 
 app.use("/api/chat", chatRoutes);
+
+app.use("/api/support", supportRoutes);
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 

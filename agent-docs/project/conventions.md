@@ -22,3 +22,6 @@ Priority: **correctness → clean structure → minimal code → scalability.**
 - Logged-in user is in `localStorage["user"]`; read it with `getStoredUser()` from `authService`.
 - Prices are PKR, shown as `Rs. <amount>`.
 - Never render API/AI text with `dangerouslySetInnerHTML`.
+- Pop-ups: SweetAlert2 through `utils/alerts.js` only — no `window.alert` / `window.confirm`.
+- Lists longer than one screen use `usePagination` + `TablePagination` (memoize the list you pass in).
+- Required form fields show a red `*`; validate on the client for UX and again on the server.

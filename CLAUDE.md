@@ -4,7 +4,9 @@ Read this file first. It is the parent reference for every coding agent (Claude 
 and links to one small doc per page / backend area in [agent-docs/](agent-docs/).
 
 **Project:** RideRent — a MERN bike rental marketplace (university FYP). Three roles: `user` (renter),
-`provider` (bike owner, needs admin approval), `admin`.
+`provider` (bike owner, needs admin approval), `admin`. Bookings need provider approval; the platform keeps a
+10% commission; accounts are verified by CNIC (KYC); after acceptance renter and owner chat and the owner marks hand-over and return;
+an AI customer support chat (Google Gemini) and a Contact/support inbox help users.
 
 | Item | Value |
 |---|---|
@@ -32,22 +34,24 @@ and links to one small doc per page / backend area in [agent-docs/](agent-docs/)
 | `/bike/:id` | [Bike Details & Booking](agent-docs/pages/bike-details.md) |
 | `/login` | [Login](agent-docs/pages/login.md) |
 | `/register` | [Register](agent-docs/pages/register.md) |
-| `/about`, `/contact` | [About & Contact](agent-docs/pages/about-contact.md) |
+| `/about`, `/contact` | [About & Contact / Support](agent-docs/pages/about-contact.md) |
 | `/user/dashboard` | [User Dashboard](agent-docs/pages/user-dashboard.md) |
 | `/provider/dashboard` | [Provider Dashboard](agent-docs/pages/provider-dashboard.md) |
 | `/provider/my-bikes` | [Provider – My Bikes](agent-docs/pages/provider-bikes.md) |
 | `/provider/add-bike` | [Provider – Add Bike](agent-docs/pages/provider-add-bike.md) |
-| `/provider/bookings` | [Provider – Bookings](agent-docs/pages/provider-bookings.md) |
+| `/provider/bookings` | [Provider – Booking Requests](agent-docs/pages/provider-bookings.md) |
 | `/admin/dashboard` | [Admin Dashboard](agent-docs/pages/admin-dashboard.md) |
 | `/admin/users` | [Admin – Users](agent-docs/pages/admin-users.md) |
-| `/admin/providers` | [Admin – Providers](agent-docs/pages/admin-providers.md) |
+| `/admin/verifications` | [Admin – Verifications (KYC)](agent-docs/pages/admin-verifications.md) |
 | `/admin/bikes` | [Admin – Bikes](agent-docs/pages/admin-bikes.md) |
 | `/admin/bookings` | [Admin – Bookings](agent-docs/pages/admin-bookings.md) |
+| `/admin/messages` | [Admin – Support Messages](agent-docs/pages/admin-messages.md) |
 
 ### Shared frontend pieces
 - [Layout, header, footer, route guards](agent-docs/frontend/layout-and-guards.md)
 - [Services & API client](agent-docs/frontend/services.md)
-- [AI Chatbot](agent-docs/frontend/chatbot.md)
+- [AI Customer Support chat](agent-docs/frontend/chatbot.md)
+- [Booking details, chat & safe hand-over](agent-docs/frontend/booking-details.md)
 
 ### Backend
 - [API endpoints](agent-docs/backend/api.md)
@@ -67,4 +71,5 @@ and links to one small doc per page / backend area in [agent-docs/](agent-docs/)
 3. Server flow is **Route → Middleware (`protect`, `adminOnly`, `providerOnly`) → Controller → Model**.
    Access control must be enforced on the server; client route guards are only for UX.
 4. Admin accounts are never created through `/api/auth/register` — only via `server/seedUsers.js`.
-5. After any change, follow [docs-maintenance.md](agent-docs/project/docs-maintenance.md).
+5. CNIC images live in `server/private/kyc` and are only served through the admin API — never make them public.
+6. After any change, follow [docs-maintenance.md](agent-docs/project/docs-maintenance.md).

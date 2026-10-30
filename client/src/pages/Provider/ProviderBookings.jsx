@@ -1,20 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ProviderLayout from "../../components/Provider/ProviderLayout";
-import { getProviderBookings } from "../../services/bookingService";
-import { Table, Badge, Spinner, Row, Col, Card } from "react-bootstrap";
-import { Calendar, User as UserIcon, Bike as BikeIcon, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import StatusBadge from "../../components/StatusBadge";
+import TablePagination from "../../components/TablePagination";
+import BookingDetailsModal from "../../components/BookingDetailsModal";
+import usePagination from "../../hooks/usePagination";
+import { getProviderBookings, updateBookingStatus, cancelBooking } from "../../services/bookingService";
+import { confirmAction, showSuccess, showError, apiError } from "../../utils/alerts";
+import { Table, Badge, Spinner, Button, Nav, Form } from "react-bootstrap";
+import { Calendar, User as UserIcon, Bike as BikeIcon, Check, X, MessageSquare } from "lucide-react";
+
+const FILTERS = [
+  { key: "pending", label: "Requests" },
+  { key: "approved", label: "Accepted" },
+  { key: "ongoing", label: "On ride" },
+  { key: "completed", label: "Completed" },
+  { key: "closed", label: "Cancelled / Rejected" },
+  { key: "all", label: "All" },
+];
+
+const formatDate = (date) => new Date(date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
 const ProviderBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("pending");
+  const [query, setQuery] = useState("");
+  const [openId, setOpenId] = useState(null);
 
   const fetchBookings = async () => {
-    setLoading(true);
     try {
       const res = await getProviderBookings();
       setBookings(res.data);
     } catch (err) {
-      console.error("Error fetching provider bookings", err);
+      showError(apiError(err, "Could not load bookings"));
     } finally {
       setLoading(false);
     }
@@ -24,91 +42,142 @@ const ProviderBookings = () => {
     fetchBookings();
   }, []);
 
-  const formatDate = (date) => new Date(date).toLocaleDateString("en-US", { 
-    month: "short", 
-    day: "numeric", 
-    year: "numeric" 
-  });
+  const matches = (b, key) =>
+    key === "all" ? true : key === "closed" ? ["cancelled", "rejected"].includes(b.status) : b.status === key;
 
-  const getStatusBadge = (booking) => {
-    if (booking.status === "cancelled") return <Badge bg="danger" className="rounded-pill px-3">Cancelled</Badge>;
-    const today = new Date();
-    const end = new Date(booking.endDate);
-    if (end < today) return <Badge bg="secondary" className="rounded-pill px-3">Completed</Badge>;
-    return <Badge bg="success" className="rounded-pill px-3">Active</Badge>;
+  const filtered = useMemo(() => {
+    const text = query.trim().toLowerCase();
+    return bookings.filter(
+      (b) => matches(b, filter) && (!text || `${b.user?.name} ${b.bike?.name}`.toLowerCase().includes(text))
+    );
+  }, [bookings, filter, query]);
+  const pagination = usePagination(filtered, 10);
+
+  const handleStatus = async (booking, status) => {
+    const accept = status === "approved";
+    const ok = await confirmAction({
+      title: accept ? "Accept this booking?" : "Reject this booking?",
+      text: accept
+        ? `${booking.user?.name} will see your phone and shop address.`
+        : `${booking.user?.name}'s request for ${booking.bike?.name} will be rejected.`,
+      confirmText: accept ? "Accept" : "Reject",
+      danger: !accept,
+    });
+    if (!ok) return;
+    try {
+      await updateBookingStatus(booking._id, status);
+      showSuccess(accept ? "Booking accepted" : "Booking rejected");
+      fetchBookings();
+    } catch (err) {
+      showError(apiError(err, "Failed to update booking"));
+    }
+  };
+
+  const handleCancel = async (booking) => {
+    const ok = await confirmAction({ title: "Cancel this accepted booking?", confirmText: "Yes, cancel", cancelText: "Keep booking", danger: true });
+    if (!ok) return;
+    try {
+      await cancelBooking(booking._id);
+      showSuccess("Booking cancelled");
+      fetchBookings();
+    } catch (err) {
+      showError(apiError(err, "Failed to cancel booking"));
+    }
   };
 
   return (
     <ProviderLayout>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h3 className="fw-bold mb-1">Rental Activity</h3>
-          <p className="text-muted small mb-0">Track bookings for your fleet</p>
-        </div>
-        <div className="d-flex gap-2">
-            <Badge bg="light" className="text-dark border p-2 px-3 rounded-pill shadow-sm">
-                {bookings.length} Total Bookings
-            </Badge>
-        </div>
+      <div className="mb-4">
+        <h3 className="fw-bold mb-1">Bookings</h3>
+        <p className="text-muted small mb-0">
+          Accept requests, chat with customers, hand over the bike and mark the bike returned.
+          You earn 90% of each accepted booking.
+        </p>
       </div>
 
       <div className="bg-white rounded shadow-sm p-4 border border-light">
+        <div className="d-flex flex-wrap justify-content-between gap-2 mb-3">
+          <Nav variant="pills" className="flex-wrap gap-1 small">
+            {FILTERS.map((f) => (
+              <Nav.Item key={f.key}>
+                <Nav.Link active={filter === f.key} onClick={() => setFilter(f.key)} className="py-1 px-3" role="button">
+                  {f.label} <Badge bg="light" text="dark" className="ms-1">{bookings.filter((b) => matches(b, f.key)).length}</Badge>
+                </Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
+          <Form.Control size="sm" style={{ maxWidth: "240px" }} placeholder="Search customer or bike" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+
         {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" variant="success" />
-          </div>
-        ) : bookings.length === 0 ? (
+          <div className="text-center py-5"><Spinner animation="border" variant="success" /></div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-5 border rounded bg-light">
             <Calendar size={48} className="text-muted mb-3 opacity-25" />
-            <p className="text-muted mb-0">No booking requests found for your fleet.</p>
+            <p className="text-muted mb-0">No bookings here.</p>
           </div>
         ) : (
           <div className="table-responsive">
             <Table hover className="align-middle mb-0">
-              <thead className="bg-light text-secondary small text-uppercase fw-bold">
-                <tr className="border-bottom">
-                  <th className="py-3 ps-3 border-0">Customer</th>
-                  <th className="py-3 border-0 text-center">Vehicle</th>
-                  <th className="py-3 border-0 text-center">Rental Period</th>
-                  <th className="py-3 border-0 text-center">Status</th>
-                  <th className="py-3 pe-3 border-0 text-end">Earnings</th>
+              <thead className="bg-light text-secondary small text-uppercase">
+                <tr>
+                  <th className="border-0">Customer</th>
+                  <th className="border-0">Vehicle</th>
+                  <th className="border-0 text-center">Rental Period</th>
+                  <th className="border-0 text-center">Status</th>
+                  <th className="border-0 text-end">Your Earning</th>
+                  <th className="border-0 text-end">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((booking) => (
-                  <tr key={booking._id} className="border-bottom hover-bg-light transition-all">
-                    <td className="ps-3 py-3 border-0">
+                {pagination.pageItems.map((booking) => (
+                  <tr key={booking._id}>
+                    <td>
                       <div className="d-flex align-items-center gap-2">
-                         <div className="rounded-circle bg-success bg-opacity-10 p-1 px-2 d-flex align-items-center justify-content-center border" style={{width: "32px", height: "32px"}}>
-                            <UserIcon size={14} className="text-success" />
-                         </div>
-                         <div>
-                            <div className="fw-bold text-dark mb-0 d-block lh-1 text-capitalize">{booking.user?.name || "Customer"}</div>
-                            <div className="text-muted" style={{fontSize: "0.7rem"}}>{booking.user?.email || "-"}</div>
-                         </div>
+                        <div className="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center border" style={{ width: "32px", height: "32px" }}>
+                          <UserIcon size={14} className="text-success" />
+                        </div>
+                        <div>
+                          <div className="fw-bold text-dark">{booking.user?.name || "Customer"}</div>
+                          <div className="text-muted" style={{ fontSize: "0.75rem" }}>{booking.user?.city || "-"}</div>
+                        </div>
                       </div>
                     </td>
-                    <td className="border-0 text-center">
-                       <div className="d-inline-flex align-items-center gap-2">
-                          <BikeIcon size={14} className="text-primary" />
-                          <span className="fw-medium text-dark">{booking.bike?.name || "Bike"}</span>
-                       </div>
+                    <td>
+                      <BikeIcon size={14} className="text-primary me-1" />
+                      <span className="fw-medium">{booking.bike?.name || "Bike"}</span>
                     </td>
-                    <td className="text-center border-0 small">
-                       <div className="d-inline-flex align-items-center gap-2 alert alert-light p-1 px-3 border border-light shadow-sm mb-0 rounded-pill">
-                          <Calendar size={12} className="text-secondary" />
-                          <span className="fw-bold">{formatDate(booking.startDate)}</span>
-                          <span className="text-muted opacity-50">➔</span>
-                          <span className="fw-bold">{formatDate(booking.endDate)}</span>
-                       </div>
+                    <td className="text-center small">
+                      {formatDate(booking.startDate)} → {formatDate(booking.endDate)}
                     </td>
-                    <td className="text-center border-0">
-                        {getStatusBadge(booking)}
+                    <td className="text-center"><StatusBadge booking={booking} /></td>
+                    <td className="text-end">
+                      <div className="text-success fw-bold">Rs. {(booking.providerEarning || 0).toLocaleString()}</div>
+                      <div className="text-muted" style={{ fontSize: "0.75rem" }}>of Rs. {(booking.totalPrice || 0).toLocaleString()}</div>
                     </td>
-                    <td className="text-end pe-3 border-0">
-                       <span className="text-success fw-bold fs-6">
-                           Rs. {(booking.totalPrice || 0).toFixed(2)}
-                       </span>
+                    <td className="text-end">
+                      <div className="d-flex justify-content-end gap-1">
+                        {booking.status === "pending" && (
+                          <>
+                            <Button size="sm" variant="success" onClick={() => handleStatus(booking, "approved")}>
+                              <Check size={14} /> Accept
+                            </Button>
+                            <Button size="sm" variant="outline-danger" onClick={() => handleStatus(booking, "rejected")} title="Reject">
+                              <X size={14} />
+                            </Button>
+                          </>
+                        )}
+                        {booking.status !== "pending" && (
+                          <Button size="sm" variant="outline-success" onClick={() => setOpenId(booking._id)}>
+                            <MessageSquare size={14} /> {booking.status === "approved" ? "Hand over" : booking.status === "ongoing" ? "Return" : "Details"}
+                          </Button>
+                        )}
+                        {booking.status === "approved" && new Date(booking.startDate) > new Date() && (
+                          <Button size="sm" variant="outline-secondary" onClick={() => handleCancel(booking)} title="Cancel">
+                            <X size={14} />
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -116,7 +185,10 @@ const ProviderBookings = () => {
             </Table>
           </div>
         )}
+        <TablePagination pagination={pagination} label="bookings" />
       </div>
+
+      <BookingDetailsModal bookingId={openId} onHide={() => setOpenId(null)} onChanged={fetchBookings} />
     </ProviderLayout>
   );
 };

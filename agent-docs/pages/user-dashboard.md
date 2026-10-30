@@ -2,8 +2,9 @@
 
 Back to [index](../../CLAUDE.md)
 
-- **File:** `client/src/pages/User/UserDashboard.jsx` · **Guard:** `ProtectedRoute` (any logged-in user)
-- **Shows:** profile card (name, role, email, avatar from ui-avatars.com) + "My Rental History" table.
-- **API:** `getMyBookings()` → `GET /api/bookings/my`; `cancelBooking(id)` → `PUT /api/bookings/cancel/:id`.
-- **Status badge:** `Cancelled` (from status), else `Completed` if the end date has passed, else `Scheduled`.
-- **Cancel button:** only for non-cancelled bookings whose start date is in the future.
+- **File:** `client/src/pages/User/UserDashboard.jsx` · **Guard:** `ProtectedRoute` (customers only)
+- **Banner:** verification pending, or rejected with the admin's reason (fresh status from `refreshStoredUser()`).
+- **Bookings:** `GET /api/bookings/my`; status pills with counts (All, Pending, Accepted, On ride, Completed,
+  Cancelled/Rejected); 8 per page (`usePagination` + `TablePagination`).
+- **Actions:** **Details & chat** opens [BookingDetailsModal](../frontend/booking-details.md) (contacts, shop address, chat);
+  **Cancel** (SweetAlert confirm) for pending/accepted bookings that have not started.

@@ -60,7 +60,7 @@ const Header = () => {
             <Nav.Link as={Link} to="/" style={{ color: mutedText }}>
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/Bike" style={{ color: mutedText }}>
+            <Nav.Link as={Link} to="/bike" style={{ color: mutedText }}>
               Browse Bikes
             </Nav.Link>
             {!user && (
@@ -68,8 +68,11 @@ const Header = () => {
                 Become a Provider
               </Nav.Link>
             )}
-            <Nav.Link as={Link} to="/About" style={{ color: mutedText }}>
+            <Nav.Link as={Link} to="/about" style={{ color: mutedText }}>
               About
+            </Nav.Link>
+            <Nav.Link as={Link} to="/contact" style={{ color: mutedText }}>
+              Contact
             </Nav.Link>
           </Nav>
 

@@ -25,6 +25,22 @@ export const protect = async (req, res, next) => {
   next();
 };
 
+// Like protect, but lets visitors without a valid token through (req.user stays undefined)
+export const optionalAuth = async (req, res, next) => {
+  const header = req.headers.authorization;
+
+  if (header && header.startsWith("Bearer ")) {
+    try {
+      const decoded = jwt.verify(header.split(" ")[1], process.env.JWT_SECRET);
+      req.user = (await User.findById(decoded.id).select("-password")) || undefined;
+    } catch {
+      req.user = undefined;
+    }
+  }
+
+  next();
+};
+
 export const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();

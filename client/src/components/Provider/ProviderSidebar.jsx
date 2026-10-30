@@ -25,7 +25,7 @@ const ProviderSidebar = () => {
   };
 
   return (
-    <div className="bg-white border-end vh-100 position-sticky top-0" style={{ width: "260px" }}>
+    <div className="bg-white border-end vh-100 position-sticky top-0" style={{ width: "260px", flexShrink: 0 }}>
       <div className="p-4 border-bottom">
         <h5 className="fw-bold mb-0" style={{ color: "#198754" }}>Provider Hub</h5>
       </div>

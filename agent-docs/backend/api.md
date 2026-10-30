@@ -2,45 +2,48 @@
 
 Back to [index](../../CLAUDE.md) · Interactive docs: `http://localhost:5000/api-docs` (Swagger)
 
-Auth column: **public** · **login** (`protect`) · **provider** (`protect` + `providerOnly`, approved) · **admin** (`protect` + `adminOnly`)
+Auth: **public** · **optional** (`optionalAuth`) · **login** (`protect`) · **provider** (`protect` + `providerOnly`, approved) · **admin**
 
-## Auth — `routes/authRoutes.js` → `controllers/authController.js`
+## Auth
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| POST | `/api/auth/register` | public | body `{ name, email, password (≥6), phone?, role? }`; role must be `user` or `provider` |
-| POST | `/api/auth/login` | public | body `{ email, password }` → `{ _id, name, email, phone, role, isApproved, token }` |
-| GET | `/api/auth/me` | login | current profile (fresh `isApproved`) |
+| GET | `/api/auth/captcha` | public | `{ question, token }` — token holds an HMAC of the answer, 10 min |
+| POST | `/api/auth/register` | public | **multipart**: role, name, email, phone, password, cnic, city, address, licenseNumber (customer) / shopName (provider), `cnicFront`, `cnicBack`, captchaToken, captchaAnswer → account with `isApproved: false` |
+| POST | `/api/auth/login` | public | → profile + `isApproved`, `verificationStatus`, `verificationNote`, token |
+| GET | `/api/auth/me` | login | fresh profile |
 
-## Bikes — `routes/bikeRoutes.js` → `controllers/bikeController.js`
+## Bikes
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/api/bikes` | public | all bikes + provider name/email |
-| GET | `/api/bikes/:id` | public | one bike |
-| GET | `/api/bikes/my/bikes` | provider | my bikes |
-| POST | `/api/bikes` | provider | `{ name, brand, city, rentPerDay, image }` |
-| PUT | `/api/bikes/:id` | provider | owner only |
-| DELETE | `/api/bikes/:id` | provider | owner only |
-| POST | `/api/bikes/:id/reviews` | login | `{ rating, comment }`, one review per user |
+| GET | `/api/bikes` | public | available bikes |
+| GET | `/api/bikes/:id` | public | one bike with reviews |
+| GET | `/api/bikes/my/bikes` | provider | own bikes |
+| POST / PUT / DELETE | `/api/bikes`, `/api/bikes/:id` | provider | owner only; fields incl. category, description, isAvailable |
+| POST | `/api/bikes/:id/reviews` | login | only after the renter **picked up** the bike (`ongoing`/`completed`), once |
 
-## Bookings — `routes/bookingRoutes.js` → `controllers/bookingController.js`
+## Bookings
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| POST | `/api/bookings` | login | `{ bikeId, startDate, endDate }`; rejects end < start and overlaps; price = max(1, days) × rent |
-| GET | `/api/bookings/my` | login | my bookings |
-| GET | `/api/bookings/provider` | provider | bookings for my bikes |
-| GET | `/api/bookings/admin` | admin | all bookings |
-| PUT | `/api/bookings/cancel/:id` | login | renter, the bike's provider, or admin; not twice |
+| POST | `/api/bookings` | login | customers only, **verified** account, start ≥ today, ≤ 30 days, bike available, no overlap with pending/approved/ongoing |
+| GET | `/api/bookings/my` | login | renter's list (no chat) |
+| GET | `/api/bookings/provider` | provider | owner's list (no chat) |
+| GET | `/api/bookings/admin` | admin | all |
+| GET | `/api/bookings/:id` | renter / owner / admin | details; contacts only after acceptance |
+| POST | `/api/bookings/:id/messages` | renter / owner | `{ text }`, after acceptance |
+| PUT | `/api/bookings/:id/status` | owner / admin | `{ status: approved \| rejected }` from pending |
+| PUT | `/api/bookings/:id/pickup` | provider (owner) | owner confirms hand-over: `approved` → `ongoing` |
+| PUT | `/api/bookings/:id/return` | provider (owner) | `ongoing` → `completed` |
+| PUT | `/api/bookings/cancel/:id` | renter / owner / admin | only `pending` or `approved` |
 
-## Admin — `routes/adminRoutes.js` → `controllers/adminController.js` (all **admin**)
-`GET /api/admin/users` · `DELETE /api/admin/users/:id` (not admins; provider → their bikes deleted) ·
-`GET /api/admin/providers/pending` · `PUT /api/admin/providers/:id/approve` · `GET /api/admin/bikes` ·
-`DELETE /api/admin/bikes/:id` · `GET /api/admin/bookings` · `GET /api/admin/stats`
+## Admin (all admin, under `/api/admin`)
+`GET /users` · `DELETE /users/:id` · `GET /verifications?status=pending|approved|rejected` · `PUT /users/:id/approve` ·
+`PUT /users/:id/reject { reason }` · `GET /users/:id/documents/:side` (cnicFront|cnicBack image) · `GET /bikes` ·
+`DELETE /bikes/:id` · `GET /bookings` · `GET /stats` (counts, revenue, platformEarnings, pendingVerifications, openMessages,
+`monthly[6]`, `bookingsByStatus`) · `GET /messages` · `PUT /messages/:id`
 
-## Other
+## Support & other
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| POST | `/api/upload` | provider | multipart field `image` (jpg/jpeg/png) → text `/uploads/<timestamp>.<ext>` |
-| POST | `/api/chat` | public | `{ message }` → `{ reply }` (Gemini) |
-| GET | `/uploads/<file>` | public | static images |
-
-Errors are JSON `{ message }`. A final error handler in `server.js` converts thrown errors (e.g. Multer) to JSON.
+| POST | `/api/support` | optional | contact form ticket |
+| POST | `/api/chat` | optional | AI customer support |
+| POST | `/api/upload` | provider | bike photo jpg/png ≤ 5 MB |

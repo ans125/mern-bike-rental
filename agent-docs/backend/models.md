@@ -2,39 +2,28 @@
 
 Back to [index](../../CLAUDE.md)
 
-All models have `createdAt` / `updatedAt` (timestamps).
+## User — `users`
+| Field | Notes |
+|---|---|
+| name, email (unique), phone `03XX-XXXXXXX`, password (bcrypt) | |
+| role | `admin` \| `provider` \| `user` |
+| cnic `12345-1234567-1`, city, address | address = shop pick-up location for providers |
+| licenseNumber | customers |
+| shopName | providers |
+| documents.cnicFront / cnicBack | file names in `server/private/kyc` (not public) |
+| isApproved, verificationStatus (`pending`/`approved`/`rejected`), verificationNote | set by admin; **access checks use `isApproved`** |
 
-## User — `server/models/User.js` → collection `users`
-| Field | Type | Notes |
-|---|---|---|
-| name | String | required |
-| email | String | required, unique |
-| phone | String | default `""` |
-| password | String | bcrypt hash, never returned by `protect` |
-| role | `admin` \| `provider` \| `user` | default `user` |
-| isApproved | Boolean | `true` for users on signup; providers start `false` |
+## Bike — `bikes`
+provider → User, name, brand, city, rentPerDay, image, description, category, isAvailable, rating, numReviews, reviews[].
 
-## Bike — `server/models/bikeModel.js` → collection `bikes`
-| Field | Type | Notes |
-|---|---|---|
-| provider | ObjectId → User | required, owner |
-| name, brand, city | String | required |
-| rentPerDay | Number | PKR, required |
-| image | String | required; URL or `/uploads/...` path |
-| rating, numReviews | Number | computed from `reviews` |
-| reviews | [{ user, name, rating, comment }] | embedded |
+## Booking — `bookings`
+| Field | Notes |
+|---|---|
+| bike, user, provider | |
+| startDate, endDate, totalPrice, commission (10%), providerEarning | |
+| status | `pending` → `approved` / `rejected` → `ongoing` → `completed`; `cancelled` from pending/approved |
+| pickedUpAt, returnedAt | set by pick-up / return |
+| messages[] | `{ sender, senderName, text, createdAt }` chat between renter and owner |
 
-> Some older seeded documents also contain `isAvailable` — it is not in the schema and not used.
-
-## Booking — `server/models/Booking.js` → collection `bookings`
-| Field | Type | Notes |
-|---|---|---|
-| bike | ObjectId → Bike | required |
-| user | ObjectId → User | renter |
-| provider | ObjectId → User | copied from the bike |
-| startDate, endDate | Date | required |
-| totalPrice | Number | calculated on the server |
-| status | `pending` \| `approved` \| `cancelled` | default `pending`; `approved` not used yet |
-
-## Relationships
-User (provider) 1 — * Bike 1 — * Booking * — 1 User (renter)
+## SupportMessage — `supportmessages`
+name, email, subject, message, user?, status `open`/`resolved`.

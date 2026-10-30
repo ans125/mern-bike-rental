@@ -8,12 +8,22 @@ export const getUsers = () => {
   return api.get("/admin/users");
 };
 
-export const getPendingProviders = () => {
-  return api.get("/admin/providers/pending");
+// status: pending | approved | rejected
+export const getVerifications = (status) => {
+  return api.get("/admin/verifications", { params: { status } });
 };
 
-export const approveProvider = (id) => {
-  return api.put(`/admin/providers/${id}/approve`);
+export const approveUser = (id) => {
+  return api.put(`/admin/users/${id}/approve`);
+};
+
+export const rejectUser = (id, reason) => {
+  return api.put(`/admin/users/${id}/reject`, { reason });
+};
+
+// CNIC images are private, so they are fetched with the admin token and shown as blob URLs
+export const getUserDocument = (id, side) => {
+  return api.get(`/admin/users/${id}/documents/${side}`, { responseType: "blob" });
 };
 
 export const getAllBikes = () => {
@@ -30,4 +40,12 @@ export const getAllBookings = () => {
 
 export const deleteUser = (id) => {
   return api.delete(`/admin/users/${id}`);
+};
+
+export const getSupportMessages = () => {
+  return api.get("/admin/messages");
+};
+
+export const updateSupportMessage = (id, status) => {
+  return api.put(`/admin/messages/${id}`, { status });
 };

@@ -1,14 +1,16 @@
-# AI Chatbot
+# AI Customer Support chat
 
 Back to [index](../../CLAUDE.md)
 
-- **UI:** `client/src/components/Chatbot/ChatButton.jsx`, mounted on the Home page only. Floating green button →
-  chat window ("RideRent AI · Powered by Gemini").
-- **Flow:** user message → `api.post("/chat", { message })` → server `controllers/chatController.js` →
-  Google Gemini `gemini-2.5-flash` → `{ reply }`.
-- **Context:** the server adds the live bike list (name, brand, city, Rs./day, max 50) to the system prompt,
-  so the bot can answer "cheapest bike in Lahore?" with real data.
-- **Key:** `GEMINI_API_KEY` in `server/.env` only. If missing, the server replies with a "not configured" message.
-  Never move the key back into a `VITE_*` variable — that would publish it in the browser bundle.
-- **Safety:** replies are rendered as plain text (`white-space: pre-wrap`), not HTML. Input is trimmed to 1000 chars.
-- Single-turn: previous messages are not sent to Gemini.
+- **UI:** `client/src/components/Chatbot/ChatButton.jsx` (component `CustomerSupport`), mounted once in `App.jsx`
+  on every public page (not on admin/provider panels). Floating green button → "RideRent Support" window with
+  4 quick-question buttons and a "Contact our team" link.
+- **Flow:** `askSupportAssistant(message, history)` (`services/supportService.js`) → `POST /api/chat` →
+  `controllers/chatController.js` → Google Gemini → `{ reply }`.
+- **Context sent to Gemini:** a fixed support guide (how booking, approval, cancellation, reviews, providers and
+  commission work), the live list of available bikes (max 80, cheapest first, with category and rating), the last 10 chat turns, and — if the visitor is
+  logged in (`optionalAuth`) — their name, role and last 10 bookings with status.
+- **Model:** first `gemini-flash-latest` (newest Flash, or `GEMINI_MODEL` from `.env`) with a 12 s timeout;
+  on timeout/error falls back to `gemini-2.5-flash`. If both fail, a polite "use the Contact page" reply.
+- **Key:** `GEMINI_API_KEY` in `server/.env` only — never in a `VITE_*` variable.
+- **Safety:** replies are plain text (`white-space: pre-wrap`, `**` removed), input trimmed to 1000 chars.
