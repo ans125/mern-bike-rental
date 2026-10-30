@@ -18,6 +18,6 @@ The project is kept **simple on purpose** for the FYP. Do not add the items belo
 ## Known gaps
 | Gap | Notes |
 |---|---|
-| Backend not deployed | live Vercel site has no data; see setup.md |
+| Free hosting limits | Render free server sleeps after ~15 min idle (first request ~30–50 s); its disk is wiped on restart, so bike/CNIC files uploaded on the live site are lost (seeded demo photos in Git are safe). Demo CNIC sample images are not on Render. |
 | Security deposit | mentioned in descriptions for heavy bikes, not tracked in the system |
 | Car rental, mobile app, automated tests | future |

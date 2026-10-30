@@ -59,6 +59,13 @@ cd server && node --check server.js
 ## Deployment
 - Frontend: Vercel project with **Root Directory = `client`**. Pushing to `main` on GitHub redeploys automatically.
   `client/vercel.json` rewrites all paths to `index.html` (SPA routing).
-- Backend: not deployed. To deploy later: host `server/` (e.g. Render), move DB to MongoDB Atlas, then set
-  `VITE_API_URL=https://<backend>/api` in Vercel → Project → Settings → Environment Variables and redeploy.
-  Uploaded images are stored on local disk (`server/uploads`) — use cloud storage if the host has ephemeral disk.
+  Framework Preset **Vite**. Env var `VITE_API_URL=https://riderent-api.onrender.com/api` (type **Config**, all environments).
+  Changing an env var needs a redeploy; "Redeploy" rebuilds the *same* commit, so push a new commit to deploy new code.
+- Backend: **Render** free web service `riderent-api` → https://riderent-api.onrender.com (region Oregon).
+  Root Directory `server`, build `npm install`, start `npm start`. Env vars: `MONGO_URI`, `JWT_SECRET`, `GEMINI_API_KEY`,
+  `NODE_VERSION=22` (do not set `PORT`). Auto-deploys on push to `main`.
+- Database: **MongoDB Atlas** free M0 cluster (AWS Mumbai), database `riderent`, Network Access `0.0.0.0/0`.
+  Load / reset live demo data from your PC without touching `.env` (PowerShell):
+  `$env:MONGO_URI="<atlas string>"; node seedUsers.js; node seedDemoData.js`
+- Free-tier notes: Render sleeps after ~15 min idle (open the site a minute before a demo, or ping `/api-docs` with
+  UptimeRobot every 5 min). Render's disk is temporary: files uploaded on the live site disappear on restart.

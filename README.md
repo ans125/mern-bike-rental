@@ -4,7 +4,7 @@ University Final Year Project. RideRent is an online marketplace where bike owne
 and customers (**users**) search, view and book them for chosen dates. An **admin** approves providers and manages
 the platform.
 
-- **Live site:** https://riderent-tawny.vercel.app/ (frontend only for now; the backend runs locally)
+- **Live site:** https://riderent-tawny.vercel.app/ · API: https://riderent-api.onrender.com/api-docs
 - **Project overview (non-technical):** [client/public/project-overview.html](client/public/project-overview.html) —
   also at https://riderent-tawny.vercel.app/project-overview.html
 - **For developers & coding agents:** start at [CLAUDE.md](CLAUDE.md)

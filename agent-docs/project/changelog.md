@@ -2,6 +2,10 @@
 
 Back to [index](../../CLAUDE.md) · newest first
 
+## 2026-10-30
+- **Deployed live:** backend on Render (https://riderent-api.onrender.com), database on MongoDB Atlas M0 (demo data seeded),
+  frontend on Vercel now uses `VITE_API_URL` → Render. Vercel Git link reconnected; Framework Preset set to Vite.
+
 ## 2026-10-28
 - **Simplified hand-over:** removed the 6-digit pick-up code (`Booking.pickupCode`), the WhatsApp button and the Google Maps
   link. The owner presses **Hand over** (confirm pop-up) → `ongoing`; `PUT /api/bookings/:id/pickup` takes no body.

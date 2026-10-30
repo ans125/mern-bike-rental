@@ -12,10 +12,10 @@ an AI customer support chat (Google Gemini) and a Contact/support inbox help use
 |---|---|
 | Frontend | `client/` — React 19 + Vite 7 + React Router 7 + React Bootstrap |
 | Backend | `server/` — Node 22 + Express 5 + Mongoose 9 + JWT + Multer |
-| Database | MongoDB, local (`mongodb://localhost:27017/...`, viewed in MongoDB Compass) |
+| Database | Local dev: MongoDB on `localhost:27017` (Compass). Live: MongoDB Atlas free M0 (Mumbai), db `riderent` |
 | Live frontend | https://riderent-tawny.vercel.app/ (Vercel, root dir `client`, auto-deploys from `main`) |
 | Repo | https://github.com/ans125/mern-bike-rental (public) |
-| Backend hosting | **None yet — runs locally only.** Live site has no data until a backend is deployed. |
+| Live backend | https://riderent-api.onrender.com (Render free web service, root dir `server`, auto-deploys from `main`; Swagger at `/api-docs`) |
 
 ## Index
 
