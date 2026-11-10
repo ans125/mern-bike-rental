@@ -62,7 +62,11 @@ an AI customer support chat (Google Gemini) and a Contact/support inbox help use
 ### Human-facing docs (HTML)
 - `client/public/project-overview.html` — **public**, non-technical overview for supervisors / PMs.
   Live at https://riderent-tawny.vercel.app/project-overview.html
+- `client/public/commit-report.html` — **public**, printable FYP documentation + Git commit report (team, summary, commit log).
+  Regenerate with `node scripts/generate-commit-report.mjs`. Live at https://riderent-tawny.vercel.app/commit-report.html
 - `internal-docs/backend-guide.html` — **private** (gitignored) backend team guide. Never commit it.
+- `internal-docs/viva-study-guide.html` and `internal-docs/dsa-db-oop-guide.html` — **private** viva guides (project features;
+  general basics/OOP/DSA/database/web theory with C, C++, PHP and JavaScript examples), each printed to a PDF in the same folder. Update them when the code they quote changes.
 
 ## Hard rules
 1. **Never commit secrets.** `server/.env` and `client/.env` are gitignored. Only `VITE_*` vars reach the browser —

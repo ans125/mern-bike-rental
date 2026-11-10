@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RideRent FYP Documentation & Commit Report</title>
+<meta name="description" content="Final Year Project documentation and Git commit report for RideRent.">
+<style>
+:root{--bg:#f6f8f7;--surface:#fff;--text:#14211b;--muted:#5b6b63;--line:#dde5e0;--brand:#198754;--soft:#e6f4ec}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1613;--surface:#17211c;--text:#e6efe9;--muted:#9fb2a8;--line:#2a3a32;--brand:#3fbf7f;--soft:#1b3226}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,"Segoe UI",sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:32px 16px 64px}h1{font-size:clamp(1.7rem,4vw,2.3rem);margin:8px 0}h2{margin:40px 0 12px;font-size:1.3rem;border-bottom:2px solid var(--brand);padding-bottom:4px}
+.muted{color:var(--muted)}a{color:var(--brand)}.brand{font-weight:800}.brand span{color:var(--brand)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.stat b{display:block;font-size:1.8rem;color:var(--brand)}
+table{width:100%;border-collapse:collapse;background:var(--surface);font-size:.92rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--soft)}
+td.n{text-align:right;white-space:nowrap}.bar{height:14px;background:var(--brand);border-radius:4px}ul{padding-left:20px}
+.btn{font:inherit;padding:8px 16px;border-radius:8px;border:0;background:var(--brand);color:#fff;cursor:pointer}
+@media(max-width:600px){.scroll{overflow-x:auto}}
+@media print{:root{--bg:#fff;--surface:#fff;--text:#000;--muted:#444;--line:#999;--soft:#eee}.noprint{display:none}.wrap{padding:0}h2{break-after:avoid}tr{break-inside:avoid}}
+</style></head><body><div class="wrap">
+<div class="brand">Ride<span>Rent</span></div>
+<h1>Final Year Project: Documentation &amp; Commit Report</h1>
+<p class="muted">BS Computer Science (V), Batch F24 &middot; Generated 2026-11-10 &middot; Source: <a href="https://github.com/ans125/mern-bike-rental">https://github.com/ans125/mern-bike-rental</a></p>
+<p class="noprint"><button class="btn" onclick="window.print()">Print / Save as PDF</button>
+ &nbsp;<a href="/project-overview.html">Project overview</a></p>
+
+<h2>1. Project team</h2>
+<table><tr><th>Roll no.</th><th>Name</th><th>Role</th></tr>
+<tr><td>BSCS(V)-F24-75</td><td>Muhammad Anas</td><td>Team leader</td></tr>
+<tr><td>BSCS(V)-F24-65</td><td>Muhammad Ameen</td><td>Team member</td></tr></table>
+
+<h2>2. Project summary</h2>
+<div class="card"><p><b>RideRent</b> is a MERN-stack bike rental marketplace. Owners (providers) list bikes, renters book them,
+and an admin oversees the platform.</p><ul>
+<li><b>Roles:</b> user (renter), provider (bike owner, needs admin approval), admin.</li>
+<li><b>Booking flow:</b> request, provider approval, renter/owner chat, hand-over and return marked by the owner.</li>
+<li><b>Money:</b> the platform keeps a 10% commission on each booking.</li>
+<li><b>Trust &amp; safety:</b> CNIC (KYC) verification reviewed by admin; images are stored privately.</li>
+<li><b>Support:</b> AI customer support chat (Google Gemini) and a Contact/support inbox for admins.</li></ul></div>
+
+<h2>3. Technology</h2>
+<table><tr><th>Layer</th><th>Technology</th></tr>
+<tr><td>Frontend</td><td>React 19, Vite 7, React Router 7, React Bootstrap</td></tr>
+<tr><td>Backend</td><td>Node 22, Express 5, JWT authentication, Multer uploads, Swagger API docs</td></tr>
+<tr><td>Database</td><td>MongoDB with Mongoose 9 (local for development, MongoDB Atlas live)</td></tr>
+<tr><td>Hosting</td><td>Vercel (frontend), Render (backend), Atlas (database); auto-deploy from <code>main</code></td></tr></table>
+<p>Server flow: <b>Route &rarr; Middleware (auth / role checks) &rarr; Controller &rarr; Model</b>. Access control is enforced on the server.</p>
+
+<h2>4. Live links &amp; documentation</h2>
+<ul><li>Live site: <a href="https://riderent-tawny.vercel.app/">riderent-tawny.vercel.app</a></li>
+<li>API (Swagger): <a href="https://riderent-api.onrender.com/api-docs">riderent-api.onrender.com/api-docs</a></li>
+<li>Non-technical overview: <a href="/project-overview.html">project-overview.html</a></li>
+<li>Source code &amp; developer docs (<code>agent-docs/</code>): <a href="https://github.com/ans125/mern-bike-rental">GitHub repository</a></li></ul>
+
+<h2>5. Git &amp; GitHub usage</h2>
+<ul><li>All code and documentation are version-controlled in a local repository and pushed to the remote GitHub repository above.</li>
+<li>Deployment is automatic from the <code>main</code> branch.</li>
+<li>This report is generated directly from <code>git log</code> by <code>scripts/generate-commit-report.mjs</code>.</li></ul>
+
+<h2>6. Commit summary</h2>
+<div class="grid">
+<div class="card stat"><b>16</b>commits</div>
+<div class="card stat"><b>9</b>days with commits</div>
+<div class="card stat"><b>278</b>days, first to last</div>
+<div class="card stat"><b>+17,455</b>lines added</div>
+<div class="card stat"><b>-2,550</b>lines removed</div></div>
+<p class="muted">Period: 2026-01-26 to 2026-10-30. Committer: Muhammad Anas (team leader), 16 commits.</p>
+
+<h3>Commits per month</h3>
+<table><tr><td>2026-01</td><td class="n">4</td><td style="width:60%"><div class="bar" style="width:100%"></div></td></tr><tr><td>2026-02</td><td class="n">4</td><td style="width:60%"><div class="bar" style="width:100%"></div></td></tr><tr><td>2026-03</td><td class="n">3</td><td style="width:60%"><div class="bar" style="width:75%"></div></td></tr><tr><td>2026-04</td><td class="n">1</td><td style="width:60%"><div class="bar" style="width:25%"></div></td></tr><tr><td>2026-10</td><td class="n">4</td><td style="width:60%"><div class="bar" style="width:100%"></div></td></tr></table>
+
+<h2>7. Full commit log</h2>
+<div class="scroll"><table><tr><th>#</th><th>Date</th><th>Time</th><th>Hash</th><th>Message</th><th>Files</th><th>+</th><th>&minus;</th></tr>
+<tr><td class="n">1</td><td>2026-01-26</td><td>15:39</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/1d5a07b"><code>1d5a07b</code></a></td><td>Initial commit: frontend setup</td><td class="n">14</td><td class="n">3389</td><td class="n">0</td></tr>
+<tr><td class="n">2</td><td>2026-01-29</td><td>12:07</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/41c85be"><code>41c85be</code></a></td><td>Create README.md</td><td class="n">1</td><td class="n">7</td><td class="n">0</td></tr>
+<tr><td class="n">3</td><td>2026-01-29</td><td>12:08</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/9728da5"><code>9728da5</code></a></td><td>`making landing page `</td><td class="n">12</td><td class="n">324</td><td class="n">15</td></tr>
+<tr><td class="n">4</td><td>2026-01-29</td><td>12:08</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/38a7617"><code>38a7617</code></a></td><td>Merge branch 'main' of https://github.com/ans125/mern-bike-rental</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+<tr><td class="n">5</td><td>2026-02-16</td><td>16:03</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/7ae4ba5"><code>7ae4ba5</code></a></td><td>header footer added</td><td class="n">4</td><td class="n">152</td><td class="n">49</td></tr>
+<tr><td class="n">6</td><td>2026-02-16</td><td>16:24</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/9dcebad"><code>9dcebad</code></a></td><td>vercel file uploading</td><td class="n">2</td><td class="n">8</td><td class="n">0</td></tr>
+<tr><td class="n">7</td><td>2026-02-16</td><td>16:50</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/f7825c4"><code>f7825c4</code></a></td><td>Fix SPA routing for Vercel</td><td class="n">1</td><td class="n">4</td><td class="n">1</td></tr>
+<tr><td class="n">8</td><td>2026-02-24</td><td>15:25</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/7d1685b"><code>7d1685b</code></a></td><td>`Added slick-carousel and react-slick to the project, updated package-lock.json and package.json, and modified several components to use these libraries`</td><td class="n">18</td><td class="n">446</td><td class="n">28</td></tr>
+<tr><td class="n">9</td><td>2026-03-16</td><td>12:33</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/4247470"><code>4247470</code></a></td><td>Add bike and booking controllers, routes, and API integration; implement bike management and booking functionalities</td><td class="n">43</td><td class="n">4163</td><td class="n">16</td></tr>
+<tr><td class="n">10</td><td>2026-03-24</td><td>14:24</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/59b568b"><code>59b568b</code></a></td><td>Initial commit with client and server</td><td class="n">1</td><td class="n">30</td><td class="n">0</td></tr>
+<tr><td class="n">11</td><td>2026-03-24</td><td>14:32</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/ab2a338"><code>ab2a338</code></a></td><td>Clean add server backend</td><td class="n">2</td><td class="n">24</td><td class="n">3</td></tr>
+<tr><td class="n">12</td><td>2026-04-07</td><td>13:30</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/0b5b5bf"><code>0b5b5bf</code></a></td><td>chore: push completed features without md/prompt folders</td><td class="n">36</td><td class="n">2702</td><td class="n">386</td></tr>
+<tr><td class="n">13</td><td>2026-10-19</td><td>11:54</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/a78751d"><code>a78751d</code></a></td><td>fix: security and booking bugs; add project docs and agent index</td><td class="n">66</td><td class="n">1263</td><td class="n">516</td></tr>
+<tr><td class="n">14</td><td>2026-10-30</td><td>11:26</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/56a9530"><code>56a9530</code></a></td><td>Prepare for deployment</td><td class="n">107</td><td class="n">4923</td><td class="n">1527</td></tr>
+<tr><td class="n">15</td><td>2026-10-30</td><td>12:23</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/709d94f"><code>709d94f</code></a></td><td>Trigger Vercel deploy</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+<tr><td class="n">16</td><td>2026-10-30</td><td>14:54</td><td><a href="https://github.com/ans125/mern-bike-rental/commit/371d6c4"><code>371d6c4</code></a></td><td>Docs: live deployment on Render, Atlas and Vercel</td><td class="n">6</td><td class="n">20</td><td class="n">9</td></tr>
+</table></div>
+<p class="muted">Re-run <code>node scripts/generate-commit-report.mjs</code> before the presentation to refresh this page.</p>
+</div></body></html>

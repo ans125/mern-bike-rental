@@ -2,6 +2,10 @@
 
 Back to [index](../../CLAUDE.md) · newest first
 
+## 2026-11-10
+- **FYP documentation & commit report:** public printable page `client/public/commit-report.html` (team, summary, tech, full commit log),
+  generated from `git log` by `scripts/generate-commit-report.mjs`. Re-run the script before presenting.
+
 ## 2026-10-30
 - **Deployed live:** backend on Render (https://riderent-api.onrender.com), database on MongoDB Atlas M0 (demo data seeded),
   frontend on Vercel now uses `VITE_API_URL` → Render. Vercel Git link reconnected; Framework Preset set to Vite.
